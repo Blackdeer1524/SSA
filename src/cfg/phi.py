@@ -124,7 +124,7 @@ class SSAFormer:
                         if block.phi.get(var) is not None:
                             continue
                         block.phi[var] = Phi(var)
-                        q.extend(DF[insertion_candidate])
+                        q.append(insertion_candidate)
 
     def transform(self):
         self.insert_phi()

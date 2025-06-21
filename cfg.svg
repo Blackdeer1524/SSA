@@ -23,7 +23,7 @@
 <title>BB1</title>
 <polygon fill="none" stroke="black" points="327.5,-738 217.5,-738 217.5,-610 327.5,-610 327.5,-738"/>
 <text text-anchor="start" x="225.5" y="-722.8" font-family="Times,serif" font-size="14.00">BB1:</text>
-<text text-anchor="start" x="225.5" y="-707.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;a1 = φ(a2, a0)</text>
+<text text-anchor="start" x="225.5" y="-707.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;a1 = φ(a0, a2)</text>
 <text text-anchor="start" x="225.5" y="-692.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;i1 = φ(i2, i0)</text>
 <text text-anchor="start" x="225.5" y="-677.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;j0 = φ(j2)</text>
 <text text-anchor="start" x="225.5" y="-662.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k0 = φ(k1)</text>
@@ -38,7 +38,7 @@
 <polygon fill="black" stroke="black" points="269.29,-748.13 265.76,-738.14 262.29,-748.15 269.29,-748.13"/>
 </g>
 <!-- BB0&#45;&gt;BB1 -->
-<g id="edge18" class="edge">
+<g id="edge20" class="edge">
 <title>BB0&#45;&gt;BB1</title>
 <path fill="none" stroke="blue" d="M278.45,-773.69C278.87,-765.81 279.13,-757.1 279.21,-748.21"/>
 <polygon fill="blue" stroke="blue" points="282.71,-748.15 279.24,-738.14 275.71,-748.13 282.71,-748.15"/>
@@ -64,7 +64,7 @@
 <polygon fill="black" stroke="black" points="197.98,-580.82 189.83,-574.06 191.98,-584.43 197.98,-580.82"/>
 </g>
 <!-- BB1&#45;&gt;BB2 -->
-<g id="edge17" class="edge">
+<g id="edge14" class="edge">
 <title>BB1&#45;&gt;BB2</title>
 <path fill="none" stroke="blue" d="M226.71,-609.66C219.87,-600.19 213.05,-590.77 206.9,-582.25"/>
 <polygon fill="blue" stroke="blue" points="209.68,-580.12 200.98,-574.06 204,-584.22 209.68,-580.12"/>
@@ -83,7 +83,7 @@
 <polygon fill="black" stroke="black" points="270.23,-577 267.56,-566.75 263.25,-576.43 270.23,-577"/>
 </g>
 <!-- BB1&#45;&gt;BB3 -->
-<g id="edge16" class="edge">
+<g id="edge19" class="edge">
 <title>BB1&#45;&gt;BB3</title>
 <path fill="none" stroke="blue" d="M279.25,-609.66C279.23,-598.1 278.9,-586.59 278.26,-576.73"/>
 <polygon fill="blue" stroke="blue" points="281.75,-576.43 277.44,-566.75 274.77,-577 281.75,-576.43"/>
@@ -101,7 +101,7 @@
 <text text-anchor="start" x="176" y="-469.8" font-family="Times,serif" font-size="14.00">BB4:</text>
 <text text-anchor="start" x="176" y="-454.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;a2 = φ(a3, a1)</text>
 <text text-anchor="start" x="176" y="-439.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;j2 = φ(j1, j3)</text>
-<text text-anchor="start" x="176" y="-424.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k1 = φ(k0, k2)</text>
+<text text-anchor="start" x="176" y="-424.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k1 = φ(k4, k0)</text>
 <text text-anchor="start" x="176" y="-409.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;cmp j2 10</text>
 <text text-anchor="start" x="176" y="-394.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;jlt BB5</text>
 <text text-anchor="start" x="176" y="-379.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;jmp BB6</text>
@@ -113,7 +113,7 @@
 <polygon fill="black" stroke="black" points="197.66,-495.93 197.71,-485.34 191.07,-493.59 197.66,-495.93"/>
 </g>
 <!-- BB2&#45;&gt;BB4 -->
-<g id="edge14" class="edge">
+<g id="edge17" class="edge">
 <title>BB2&#45;&gt;BB4</title>
 <path fill="none" stroke="blue" d="M197.42,-520.82C200.77,-513.04 204.32,-504.1 207.72,-494.93"/>
 <polygon fill="blue" stroke="blue" points="211.08,-495.93 211.2,-485.34 204.5,-493.54 211.08,-495.93"/>
@@ -146,7 +146,7 @@
 <polygon fill="black" stroke="black" points="192.11,-345.29 186.73,-336.16 185.24,-346.65 192.11,-345.29"/>
 </g>
 <!-- BB4&#45;&gt;BB5 -->
-<g id="edge20" class="edge">
+<g id="edge15" class="edge">
 <title>BB4&#45;&gt;BB5</title>
 <path fill="none" stroke="blue" d="M208.84,-371.8C206.41,-363.15 203.93,-354.33 201.59,-346.01"/>
 <polygon fill="blue" stroke="blue" points="204.9,-344.84 198.82,-336.16 198.16,-346.74 204.9,-344.84"/>
@@ -156,8 +156,8 @@
 <title>BB6</title>
 <polygon fill="none" stroke="black" points="428,-336 329,-336 329,-268 428,-268 428,-336"/>
 <text text-anchor="start" x="337" y="-320.8" font-family="Times,serif" font-size="14.00">BB6:</text>
-<text text-anchor="start" x="337" y="-305.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%0 = i1 + 1</text>
-<text text-anchor="start" x="337" y="-290.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;i2 = %0</text>
+<text text-anchor="start" x="337" y="-305.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%5 = i1 + 1</text>
+<text text-anchor="start" x="337" y="-290.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;i2 = %5</text>
 <text text-anchor="start" x="337" y="-275.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;jmp BB1</text>
 </g>
 <!-- BB4&#45;&gt;BB6 -->
@@ -167,7 +167,7 @@
 <polygon fill="black" stroke="black" points="325.79,-345 331.53,-336.09 321.49,-339.48 325.79,-345"/>
 </g>
 <!-- BB4&#45;&gt;BB6 -->
-<g id="edge13" class="edge">
+<g id="edge16" class="edge">
 <title>BB4&#45;&gt;BB6</title>
 <path fill="none" stroke="blue" d="M281.3,-386.73C299.15,-372.72 318.52,-357.04 335.28,-343.08"/>
 <polygon fill="blue" stroke="blue" points="337.86,-345.49 343.27,-336.38 333.36,-340.12 337.86,-345.49"/>
@@ -183,8 +183,8 @@
 <title>BB7</title>
 <polygon fill="none" stroke="black" points="99,-232 0,-232 0,-164 99,-164 99,-232"/>
 <text text-anchor="start" x="8" y="-216.8" font-family="Times,serif" font-size="14.00">BB7:</text>
-<text text-anchor="start" x="8" y="-201.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%4 = i1 + 1</text>
-<text text-anchor="start" x="8" y="-186.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k3 = %4</text>
+<text text-anchor="start" x="8" y="-201.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%1 = i1 + 1</text>
+<text text-anchor="start" x="8" y="-186.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k3 = %1</text>
 <text text-anchor="start" x="8" y="-171.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;jmp BB9</text>
 </g>
 <!-- BB5&#45;&gt;BB7 -->
@@ -194,7 +194,7 @@
 <polygon fill="black" stroke="black" points="98.71,-235.32 88.6,-232.13 94.52,-240.92 98.71,-235.32"/>
 </g>
 <!-- BB5&#45;&gt;BB7 -->
-<g id="edge19" class="edge">
+<g id="edge18" class="edge">
 <title>BB5&#45;&gt;BB7</title>
 <path fill="none" stroke="blue" d="M150.41,-267.88C137.11,-257.87 121.97,-246.8 107.52,-236.51"/>
 <polygon fill="blue" stroke="blue" points="109.3,-233.48 99.12,-230.56 105.26,-239.2 109.3,-233.48"/>
@@ -204,8 +204,8 @@
 <title>BB8</title>
 <polygon fill="none" stroke="black" points="216,-232 117,-232 117,-164 216,-164 216,-232"/>
 <text text-anchor="start" x="125" y="-216.8" font-family="Times,serif" font-size="14.00">BB8:</text>
-<text text-anchor="start" x="125" y="-201.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%5 = j2 + 2</text>
-<text text-anchor="start" x="125" y="-186.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k4 = %5</text>
+<text text-anchor="start" x="125" y="-201.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%0 = j2 + 2</text>
+<text text-anchor="start" x="125" y="-186.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k2 = %0</text>
 <text text-anchor="start" x="125" y="-171.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;jmp BB9</text>
 </g>
 <!-- BB5&#45;&gt;BB8 -->
@@ -215,7 +215,7 @@
 <polygon fill="black" stroke="black" points="172.98,-241.45 167.63,-232.3 166.11,-242.78 172.98,-241.45"/>
 </g>
 <!-- BB5&#45;&gt;BB8 -->
-<g id="edge21" class="edge">
+<g id="edge13" class="edge">
 <title>BB5&#45;&gt;BB8</title>
 <path fill="none" stroke="blue" d="M188.4,-267.88C186.92,-259.69 185.01,-250.79 182.92,-242.19"/>
 <polygon fill="blue" stroke="blue" points="186.26,-241.12 180.38,-232.3 179.48,-242.86 186.26,-241.12"/>
@@ -225,16 +225,16 @@
 <title>BB9</title>
 <polygon fill="none" stroke="black" points="223,-128 110,-128 110,0 223,0 223,-128"/>
 <text text-anchor="start" x="118" y="-112.8" font-family="Times,serif" font-size="14.00">BB9:</text>
-<text text-anchor="start" x="118" y="-97.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k2 = φ(k3, k4)</text>
-<text text-anchor="start" x="118" y="-82.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%1 = i1 + j2</text>
-<text text-anchor="start" x="118" y="-67.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%2 = a2 + %1</text>
-<text text-anchor="start" x="118" y="-52.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;a3 = %2</text>
-<text text-anchor="start" x="118" y="-37.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%3 = j2 + 1</text>
-<text text-anchor="start" x="118" y="-22.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;j3 = %3</text>
+<text text-anchor="start" x="118" y="-97.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;k4 = φ(k3, k2)</text>
+<text text-anchor="start" x="118" y="-82.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%2 = i1 + j2</text>
+<text text-anchor="start" x="118" y="-67.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%3 = a2 + %2</text>
+<text text-anchor="start" x="118" y="-52.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;a3 = %3</text>
+<text text-anchor="start" x="118" y="-37.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;%4 = j2 + 1</text>
+<text text-anchor="start" x="118" y="-22.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;j3 = %4</text>
 <text text-anchor="start" x="118" y="-7.8" font-family="Times,serif" font-size="14.00"> &#160;&#160;&#160;jmp BB4</text>
 </g>
 <!-- BB5&#45;&gt;BB9 -->
-<g id="edge15" class="edge">
+<g id="edge21" class="edge">
 <title>BB5&#45;&gt;BB9</title>
 <path fill="none" stroke="blue" d="M210.28,-267.83C216.06,-256.84 221.56,-244.28 224.5,-232 231.53,-202.61 232.41,-193.17 224.5,-164 222.04,-154.94 218.52,-145.86 214.42,-137.08"/>
 <polygon fill="blue" stroke="blue" points="217.52,-135.45 209.95,-128.04 211.24,-138.56 217.52,-135.45"/>

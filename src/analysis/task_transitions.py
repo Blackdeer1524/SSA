@@ -1,23 +1,23 @@
 # ====================
-# |   |==|#Ident|else|fn|;|)|return|(|}|>|>=|<=|=|for|int|<|+|#EOF|main|{|if|#Number|!=|
+# |   |!=|int|return|for|#EOF|}|fn|#Number|>=|=|==|)|+|;|#Ident|<=|<|else|if|main|>|{|(|
 # |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-# |Function|-|-|-|fn main Block|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-# |Block|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|{ Statements }|-|-|-|
-# |Statements|-|Reassignment ; Statements|-|-|-|-|Return ; Statements|-|𝓔|-|-|-|-|Loop Statements|Declaration ; Statements|-|-|-|-|-|Condition Statements|-|-|
-# |Return|-|-|-|-|-|-|return Expression|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-# |Declaration|-|-|-|-|-|-|-|-|-|-|-|-|-|-|int #Ident = Expression|-|-|-|-|-|-|-|-|
-# |Reassignment|-|#Ident = Expression|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-# |Expression|-|#Ident ExpressionTail|-|-|-|-|-|( Expression )|-|-|-|-|-|-|-|-|-|-|-|-|-|#Number ExpressionTail|-|
-# |ExpressionTail|𝓔|-|-|-|𝓔|𝓔|-|-|-|𝓔|𝓔|𝓔|-|-|-|𝓔|+ Expression|-|-|-|-|-|𝓔|
-# |Condition|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|if ( Logical ) Block ElseBranch|-|-|
-# |ElseBranch|-|𝓔|else Block|-|-|-|𝓔|-|𝓔|-|-|-|-|𝓔|𝓔|-|-|-|-|-|𝓔|-|-|
-# |Logical|-|Expression CMP Expression|-|-|-|-|-|Expression CMP Expression|-|-|-|-|-|-|-|-|-|-|-|-|-|Expression CMP Expression|-|
-# |CMP|==|-|-|-|-|-|-|-|-|>|>=|<=|-|-|-|<|-|-|-|-|-|-|!=|
-# |Loop|-|-|-|-|-|-|-|-|-|-|-|-|-|for ( Loop_1 ; Loop_2 ; Loop_3 ) Block|-|-|-|-|-|-|-|-|-|
-# |Loop_1|-|Reassignment|-|-|𝓔|-|-|-|-|-|-|-|-|-|Declaration|-|-|-|-|-|-|-|-|
-# |Loop_2|-|Logical|-|-|𝓔|-|-|Logical|-|-|-|-|-|-|-|-|-|-|-|-|-|Logical|-|
-# |Loop_3|-|Reassignment|-|-|-|𝓔|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
-# |Init|-|-|-|Function #EOF|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+# |Function|-|-|-|-|-|-|fn main Block|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+# |Block|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|{ Statements }|-|
+# |Statements|-|Declaration ; Statements|Return ; Statements|Loop Statements|-|𝓔|-|-|-|-|-|-|-|-|Reassignment ; Statements|-|-|-|Condition Statements|-|-|-|-|
+# |Return|-|-|return Expression|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+# |Declaration|-|int #Ident = Expression|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+# |Reassignment|-|-|-|-|-|-|-|-|-|-|-|-|-|-|#Ident = Expression|-|-|-|-|-|-|-|-|
+# |Expression|-|-|-|-|-|-|-|#Number ExpressionTail|-|-|-|-|-|-|#Ident ExpressionTail|-|-|-|-|-|-|-|( Expression )|
+# |ExpressionTail|𝓔|-|-|-|-|-|-|-|𝓔|-|𝓔|𝓔|+ Expression|𝓔|-|𝓔|𝓔|-|-|-|𝓔|-|-|
+# |Condition|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|if ( Logical ) Block ElseBranch|-|-|-|-|
+# |ElseBranch|-|𝓔|𝓔|𝓔|-|𝓔|-|-|-|-|-|-|-|-|𝓔|-|-|else Block|𝓔|-|-|-|-|
+# |Logical|-|-|-|-|-|-|-|Expression CMP Expression|-|-|-|-|-|-|Expression CMP Expression|-|-|-|-|-|-|-|Expression CMP Expression|
+# |CMP|!=|-|-|-|-|-|-|-|>=|-|==|-|-|-|-|<=|<|-|-|-|>|-|-|
+# |Loop|-|-|-|for ( Loop_1 ; Loop_2 ; Loop_3 ) Block|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+# |Loop_1|-|Declaration|-|-|-|-|-|-|-|-|-|-|-|𝓔|Reassignment|-|-|-|-|-|-|-|-|
+# |Loop_2|-|-|-|-|-|-|-|Logical|-|-|-|-|-|𝓔|Logical|-|-|-|-|-|-|-|Logical|
+# |Loop_3|-|-|-|-|-|-|-|-|-|-|-|𝓔|-|-|Reassignment|-|-|-|-|-|-|-|-|
+# |Init|-|-|-|-|-|-|Function #EOF|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 # 
 # ====================
 from typing import Optional, Union
@@ -33,7 +33,7 @@ from src.scanning.task_scanner import Token
 from src.scanning.task_scanner import Keyword
 
 # Token types:
-from src.scanning.task_scanner import Ident, EOF, Number
+from src.scanning.task_scanner import EOF, Number, Ident
 
 @dataclass
 class IASTNode(IGraphVizible):
@@ -398,23 +398,6 @@ class InitNode(IASTNode):
 NON_TERMINAL = FunctionNode | BlockNode | StatementsNode | ReturnNode | DeclarationNode | ReassignmentNode | ExpressionNode | ExpressionTailNode | ConditionNode | ElseBranchNode | LogicalNode | CMPNode | LoopNode | Loop_1Node | Loop_2Node | Loop_3Node | InitNode
 # ============== TERM NODES =============
 @dataclass
-class IdentNode(IASTNode):
-    value: Optional[Ident] = None
-    
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}" 
-                res += f'\t{epsilon_name} [label="𝓔"]\n' 
-                res += f"{self.node_name} -> {epsilon_name}" 
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n" 
-                return res
-
-@dataclass
 class EOFNode(IASTNode):
     value: Optional[EOF] = None
     
@@ -448,213 +431,26 @@ class NumberNode(IASTNode):
                 res += f"\t{self.node_name} -> {self.value.node_name}\n" 
                 return res
 
+@dataclass
+class IdentNode(IASTNode):
+    value: Optional[Ident] = None
+    
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}" 
+                res += f'\t{epsilon_name} [label="𝓔"]\n' 
+                res += f"{self.node_name} -> {epsilon_name}" 
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n" 
+                return res
+
 # ============== KEYWORD NODES =============
 @dataclass
-class KeywordEqualsEqualsNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordelseNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordfnNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordSemicolonNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordRightParenNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordreturnNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordLeftParenNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordRightBraceNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordGreaterThanNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordGreaterThanEqualsNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordLessThanEqualsNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordEqualsNode(IASTNode):
-    value: Optional["Keyword"] = None
-
-    def to_graphviz(self) -> str:
-        res = super().to_graphviz()
-        match self.value:
-            case None:
-                epsilon_name = f"𝓔{id(self)}"
-                res += f'\t{epsilon_name} [label="𝓔"]\n'
-                res += f"{self.node_name} -> {epsilon_name}"
-                return res
-            case _:
-                res += self.value.to_graphviz()
-                res += f"\t{self.node_name} -> {self.value.node_name}\n"
-        return res
-
-@dataclass
-class KeywordforNode(IASTNode):
+class KeywordBangEqualsNode(IASTNode):
     value: Optional["Keyword"] = None
 
     def to_graphviz(self) -> str:
@@ -688,7 +484,126 @@ class KeywordintNode(IASTNode):
         return res
 
 @dataclass
-class KeywordLessThanNode(IASTNode):
+class KeywordreturnNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordforNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordRightBraceNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordfnNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordGreaterThanEqualsNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordEqualsNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordEqualsEqualsNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordRightParenNode(IASTNode):
     value: Optional["Keyword"] = None
 
     def to_graphviz(self) -> str:
@@ -722,7 +637,7 @@ class KeywordPlusNode(IASTNode):
         return res
 
 @dataclass
-class KeywordmainNode(IASTNode):
+class KeywordSemicolonNode(IASTNode):
     value: Optional["Keyword"] = None
 
     def to_graphviz(self) -> str:
@@ -739,7 +654,41 @@ class KeywordmainNode(IASTNode):
         return res
 
 @dataclass
-class KeywordLeftBraceNode(IASTNode):
+class KeywordLessThanEqualsNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordLessThanNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordelseNode(IASTNode):
     value: Optional["Keyword"] = None
 
     def to_graphviz(self) -> str:
@@ -773,7 +722,7 @@ class KeywordifNode(IASTNode):
         return res
 
 @dataclass
-class KeywordBangEqualsNode(IASTNode):
+class KeywordmainNode(IASTNode):
     value: Optional["Keyword"] = None
 
     def to_graphviz(self) -> str:
@@ -789,20 +738,75 @@ class KeywordBangEqualsNode(IASTNode):
                 res += f"\t{self.node_name} -> {self.value.node_name}\n"
         return res
 
-TERMINAL = IdentNode | EOFNode | NumberNode | KeywordEqualsEqualsNode | KeywordelseNode | KeywordfnNode | KeywordSemicolonNode | KeywordRightParenNode | KeywordreturnNode | KeywordLeftParenNode | KeywordRightBraceNode | KeywordGreaterThanNode | KeywordGreaterThanEqualsNode | KeywordLessThanEqualsNode | KeywordEqualsNode | KeywordforNode | KeywordintNode | KeywordLessThanNode | KeywordPlusNode | KeywordmainNode | KeywordLeftBraceNode | KeywordifNode | KeywordBangEqualsNode
+@dataclass
+class KeywordGreaterThanNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordLeftBraceNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+@dataclass
+class KeywordLeftParenNode(IASTNode):
+    value: Optional["Keyword"] = None
+
+    def to_graphviz(self) -> str:
+        res = super().to_graphviz()
+        match self.value:
+            case None:
+                epsilon_name = f"𝓔{id(self)}"
+                res += f'\t{epsilon_name} [label="𝓔"]\n'
+                res += f"{self.node_name} -> {epsilon_name}"
+                return res
+            case _:
+                res += self.value.to_graphviz()
+                res += f"\t{self.node_name} -> {self.value.node_name}\n"
+        return res
+
+TERMINAL = EOFNode | NumberNode | IdentNode | KeywordBangEqualsNode | KeywordintNode | KeywordreturnNode | KeywordforNode | KeywordRightBraceNode | KeywordfnNode | KeywordGreaterThanEqualsNode | KeywordEqualsNode | KeywordEqualsEqualsNode | KeywordRightParenNode | KeywordPlusNode | KeywordSemicolonNode | KeywordLessThanEqualsNode | KeywordLessThanNode | KeywordelseNode | KeywordifNode | KeywordmainNode | KeywordGreaterThanNode | KeywordLeftBraceNode | KeywordLeftParenNode
 def transitions(
     current: NON_TERMINAL | TERMINAL, token: Token
 ) -> list[NON_TERMINAL | TERMINAL] | str | None:
     match current:
         case FunctionNode():
             match token:
-                case Keyword(value="=="):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
-                case Ident():
+                case Keyword(value="return"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="else"):
+                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
-                case Keyword(value=";"):
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="fn"):
                     res = (
@@ -814,83 +818,83 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value=")"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="return"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
+                case Number():
                     return f"unexpected token: {token}" 
                 case Keyword(value=">="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
                 case Keyword(value="="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="for"):
+                case Keyword(value="=="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
+                case Keyword(value=")"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="+"):
                     return f"unexpected token: {token}" 
-                case EOF():
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Ident():
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case BlockNode():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
+                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="for"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="int"):
+                case EOF():
                     return f"unexpected token: {token}" 
-                case Keyword(value="<"):
+                case Keyword(value="}"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="+"):
                     return f"unexpected token: {token}" 
-                case EOF():
+                case Keyword(value=";"):
+                    return f"unexpected token: {token}" 
+                case Ident():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="if"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="main"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="{"):
                     res = (
@@ -902,62 +906,18 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="if"):
-                    return f"unexpected token: {token}" 
-                case Number():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case StatementsNode():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    res = (
-                        ReassignmentNode(),
-                        KeywordSemicolonNode(),
-                        StatementsNode(),
-                    )
-
-                    current.value = res
-                    current.pos = token.start
-                    return list(res)
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
                     res = (
                         ReturnNode(),
                         KeywordSemicolonNode(),
-                        StatementsNode(),
-                    )
-
-                    current.value = res
-                    current.pos = token.start
-                    return list(res)
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    res = (
-                        LoopNode(),
                         StatementsNode(),
                     )
 
@@ -974,15 +934,51 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="<"):
+                case Keyword(value="for"):
+                    res = (
+                        LoopNode(),
+                        StatementsNode(),
+                    )
+
+                    current.value = res
+                    current.pos = token.start
+                    return list(res)
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
+                    current.pos = token.start
+                    return []
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="+"):
                     return f"unexpected token: {token}" 
-                case EOF():
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Ident():
+                    res = (
+                        ReassignmentNode(),
+                        KeywordSemicolonNode(),
+                        StatementsNode(),
+                    )
+
+                    current.value = res
+                    current.pos = token.start
+                    return list(res)
+                case Keyword(value="<="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     res = (
@@ -993,25 +989,19 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case ReturnNode():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
                     res = (
@@ -1022,69 +1012,55 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
+                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="for"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
                 case EOF():
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Keyword(value="}"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="if"):
+                case Keyword(value="fn"):
                     return f"unexpected token: {token}" 
                 case Number():
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
+                    return f"unexpected token: {token}" 
+                case Ident():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="if"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="main"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case DeclarationNode():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="int"):
                     res = (
@@ -1097,27 +1073,77 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
+                case Keyword(value="for"):
                     return f"unexpected token: {token}" 
                 case EOF():
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Keyword(value="}"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="if"):
+                case Keyword(value="fn"):
                     return f"unexpected token: {token}" 
                 case Number():
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
+                    return f"unexpected token: {token}" 
+                case Ident():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="if"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="main"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case ReassignmentNode():
             match token:
+                case Keyword(value="!="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="return"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="int"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
                 case Ident():
                     res = (
@@ -1129,53 +1155,60 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="return"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
                 case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="<"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
-                case EOF():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="main"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="{"):
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case ExpressionNode():
             match token:
+                case Keyword(value="!="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="return"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="int"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    res = (
+                        NumberNode(),
+                        ExpressionTailNode(),
+                    )
+
+                    current.value = res
+                    current.pos = token.start
+                    return list(res)
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
                 case Ident():
                     res = (
@@ -1186,15 +1219,19 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="else"):
                     return f"unexpected token: {token}" 
-                case Keyword(value=";"):
+                case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value=">"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="return"):
+                case Keyword(value="{"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="("):
                     res = (
@@ -1206,84 +1243,36 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
-                case EOF():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="main"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="if"):
-                    return f"unexpected token: {token}" 
-                case Number():
-                    res = (
-                        NumberNode(),
-                        ExpressionTailNode(),
-                    )
-
-                    current.value = res
-                    current.pos = token.start
-                    return list(res)
-                case Keyword(value="!="):
-                    return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case ExpressionTailNode():
             match token:
-                case Keyword(value="=="):
-                    current.pos = token.start
-                    return []
-                case Ident():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     current.pos = token.start
                     return []
                 case Keyword(value="return"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="("):
+                case Keyword(value="int"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
                     return f"unexpected token: {token}" 
                 case Keyword(value="}"):
                     return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    current.pos = token.start
-                    return []
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
                 case Keyword(value=">="):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="<="):
                     current.pos = token.start
                     return []
                 case Keyword(value="="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
+                case Keyword(value="=="):
+                    current.pos = token.start
+                    return []
+                case Keyword(value=")"):
                     current.pos = token.start
                     return []
                 case Keyword(value="+"):
@@ -1295,62 +1284,69 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case EOF():
+                case Keyword(value=";"):
+                    current.pos = token.start
+                    return []
+                case Ident():
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="{"):
+                case Keyword(value="<="):
+                    current.pos = token.start
+                    return []
+                case Keyword(value="<"):
+                    current.pos = token.start
+                    return []
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
                     current.pos = token.start
                     return []
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
+                    return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case ConditionNode():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
+                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="for"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="int"):
+                case EOF():
                     return f"unexpected token: {token}" 
-                case Keyword(value="<"):
+                case Keyword(value="}"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="+"):
                     return f"unexpected token: {token}" 
-                case EOF():
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Ident():
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     res = (
@@ -1365,19 +1361,57 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case ElseBranchNode():
             match token:
+                case Keyword(value="!="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="return"):
+                    current.pos = token.start
+                    return []
+                case Keyword(value="int"):
+                    current.pos = token.start
+                    return []
+                case Keyword(value="for"):
+                    current.pos = token.start
+                    return []
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
+                    current.pos = token.start
+                    return []
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
                 case Ident():
                     current.pos = token.start
                     return []
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="else"):
                     res = (
                         KeywordelseNode(),
@@ -1387,112 +1421,34 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="return"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="int"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
-                case EOF():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="main"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     current.pos = token.start
                     return []
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case LogicalNode():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    res = (
-                        ExpressionNode(),
-                        CMPNode(),
-                        ExpressionNode(),
-                    )
-
-                    current.value = res
-                    current.pos = token.start
-                    return list(res)
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    res = (
-                        ExpressionNode(),
-                        CMPNode(),
-                        ExpressionNode(),
-                    )
-
-                    current.value = res
-                    current.pos = token.start
-                    return list(res)
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
+                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="for"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
                 case EOF():
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Keyword(value="}"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="if"):
+                case Keyword(value="fn"):
                     return f"unexpected token: {token}" 
                 case Number():
                     res = (
@@ -1504,105 +1460,129 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="!="):
+                case Keyword(value=">="):
                     return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
+                    return f"unexpected token: {token}" 
+                case Ident():
+                    res = (
+                        ExpressionNode(),
+                        CMPNode(),
+                        ExpressionNode(),
+                    )
+
+                    current.value = res
+                    current.pos = token.start
+                    return list(res)
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="if"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="main"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
+                    res = (
+                        ExpressionNode(),
+                        CMPNode(),
+                        ExpressionNode(),
+                    )
+
+                    current.value = res
+                    current.pos = token.start
+                    return list(res)
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case CMPNode():
             match token:
+                case Keyword(value="!="):
+                    res = KeywordBangEqualsNode()
+                    current.value = res
+                    current.pos = token.start
+                    return [res]
+                case Keyword(value="return"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="int"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">="):
+                    res = KeywordGreaterThanEqualsNode()
+                    current.value = res
+                    current.pos = token.start
+                    return [res]
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="=="):
                     res = KeywordEqualsEqualsNode()
                     current.value = res
                     current.pos = token.start
                     return [res]
-                case Ident():
+                case Keyword(value=")"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="else"):
+                case Keyword(value="+"):
                     return f"unexpected token: {token}" 
                 case Keyword(value=";"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
+                case Ident():
                     return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="<="):
+                    res = KeywordLessThanEqualsNode()
+                    current.value = res
+                    current.pos = token.start
+                    return [res]
+                case Keyword(value="<"):
+                    res = KeywordLessThanNode()
+                    current.value = res
+                    current.pos = token.start
+                    return [res]
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="return"):
+                case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
                 case Keyword(value=">"):
                     res = KeywordGreaterThanNode()
                     current.value = res
                     current.pos = token.start
                     return [res]
-                case Keyword(value=">="):
-                    res = KeywordGreaterThanEqualsNode()
-                    current.value = res
-                    current.pos = token.start
-                    return [res]
-                case Keyword(value="<="):
-                    res = KeywordLessThanEqualsNode()
-                    current.value = res
-                    current.pos = token.start
-                    return [res]
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
-                    res = KeywordLessThanNode()
-                    current.value = res
-                    current.pos = token.start
-                    return [res]
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
-                case EOF():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="main"):
-                    return f"unexpected token: {token}" 
                 case Keyword(value="{"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="if"):
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
-                case Number():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="!="):
-                    res = KeywordBangEqualsNode()
-                    current.value = res
-                    current.pos = token.start
-                    return [res]
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case LoopNode():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
+                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="for"):
                     res = (
@@ -1620,206 +1600,230 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
                 case EOF():
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Keyword(value="}"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="if"):
+                case Keyword(value="fn"):
                     return f"unexpected token: {token}" 
                 case Number():
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
+                    return f"unexpected token: {token}" 
+                case Ident():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="if"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="main"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case Loop_1Node():
             match token:
-                case Keyword(value="=="):
-                    return f"unexpected token: {token}" 
-                case Ident():
-                    res = ReassignmentNode()
-                    current.value = res
-                    current.pos = token.start
-                    return [res]
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
                 case Keyword(value="return"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="int"):
                     res = DeclarationNode()
                     current.value = res
                     current.pos = token.start
                     return [res]
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
+                case Keyword(value="for"):
                     return f"unexpected token: {token}" 
                 case EOF():
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Keyword(value="}"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="if"):
+                case Keyword(value="fn"):
                     return f"unexpected token: {token}" 
                 case Number():
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
+                    current.pos = token.start
+                    return []
+                case Ident():
+                    res = ReassignmentNode()
+                    current.value = res
+                    current.pos = token.start
+                    return [res]
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="if"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="main"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case Loop_2Node():
             match token:
+                case Keyword(value="!="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="return"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="int"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    res = LogicalNode()
+                    current.value = res
+                    current.pos = token.start
+                    return [res]
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="=="):
                     return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
+                    current.pos = token.start
+                    return []
                 case Ident():
                     res = LogicalNode()
                     current.value = res
                     current.pos = token.start
                     return [res]
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="else"):
                     return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="fn"):
+                case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Keyword(value=")"):
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="return"):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="("):
                     res = LogicalNode()
                     current.value = res
                     current.pos = token.start
                     return [res]
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
-                case EOF():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="main"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="{"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="if"):
-                    return f"unexpected token: {token}" 
-                case Number():
-                    res = LogicalNode()
-                    current.value = res
-                    current.pos = token.start
-                    return [res]
-                case Keyword(value="!="):
-                    return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case Loop_3Node():
             match token:
+                case Keyword(value="!="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="return"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="int"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="fn"):
+                    return f"unexpected token: {token}" 
+                case Number():
+                    return f"unexpected token: {token}" 
+                case Keyword(value=">="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="="):
+                    return f"unexpected token: {token}" 
                 case Keyword(value="=="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=")"):
+                    current.pos = token.start
+                    return []
+                case Keyword(value="+"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
                 case Ident():
                     res = ReassignmentNode()
                     current.value = res
                     current.pos = token.start
                     return [res]
-                case Keyword(value="else"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=";"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="fn"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=")"):
-                    current.pos = token.start
-                    return []
-                case Keyword(value="return"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">="):
-                    return f"unexpected token: {token}" 
                 case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="="):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="for"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="<"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="+"):
-                    return f"unexpected token: {token}" 
-                case EOF():
-                    return f"unexpected token: {token}" 
-                case Keyword(value="main"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="{"):
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
         case InitNode():
             match token:
-                case Keyword(value="=="):
+                case Keyword(value="!="):
                     return f"unexpected token: {token}" 
-                case Ident():
+                case Keyword(value="return"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="else"):
+                case Keyword(value="int"):
                     return f"unexpected token: {token}" 
-                case Keyword(value=";"):
+                case Keyword(value="for"):
+                    return f"unexpected token: {token}" 
+                case EOF():
+                    return f"unexpected token: {token}" 
+                case Keyword(value="}"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="fn"):
                     res = (
@@ -1830,50 +1834,40 @@ def transitions(
                     current.value = res
                     current.pos = token.start
                     return list(res)
-                case Keyword(value=")"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="return"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="("):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="}"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value=">"):
+                case Number():
                     return f"unexpected token: {token}" 
                 case Keyword(value=">="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="<="):
-                    return f"unexpected token: {token}" 
                 case Keyword(value="="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="for"):
+                case Keyword(value="=="):
                     return f"unexpected token: {token}" 
-                case Keyword(value="int"):
-                    return f"unexpected token: {token}" 
-                case Keyword(value="<"):
+                case Keyword(value=")"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="+"):
                     return f"unexpected token: {token}" 
-                case EOF():
+                case Keyword(value=";"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="main"):
+                case Ident():
                     return f"unexpected token: {token}" 
-                case Keyword(value="{"):
+                case Keyword(value="<="):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="<"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="else"):
                     return f"unexpected token: {token}" 
                 case Keyword(value="if"):
                     return f"unexpected token: {token}" 
-                case Number():
+                case Keyword(value="main"):
                     return f"unexpected token: {token}" 
-                case Keyword(value="!="):
+                case Keyword(value=">"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="{"):
+                    return f"unexpected token: {token}" 
+                case Keyword(value="("):
                     return f"unexpected token: {token}" 
                 case Keyword(value=unexpected):
                     return f"unknown keyword: {unexpected}" 
-        case IdentNode():
-            if type(token) != Ident:
-                return f"expected Ident, but {type(token)} found" 
-            current.value = token
-            current.pos = token.start
-            return None
         case EOFNode():
             if type(token) != EOF:
                 return f"expected EOF, but {type(token)} found" 
@@ -1886,81 +1880,15 @@ def transitions(
             current.value = token
             current.pos = token.start
             return None
-        case KeywordEqualsEqualsNode():
-            if type(token) != Keyword or token.value != "==":
-                return "expected ==, {} found".format(token) 
+        case IdentNode():
+            if type(token) != Ident:
+                return f"expected Ident, but {type(token)} found" 
             current.value = token
             current.pos = token.start
             return None
-        case KeywordelseNode():
-            if type(token) != Keyword or token.value != "else":
-                return "expected else, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordfnNode():
-            if type(token) != Keyword or token.value != "fn":
-                return "expected fn, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordSemicolonNode():
-            if type(token) != Keyword or token.value != ";":
-                return "expected ;, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordRightParenNode():
-            if type(token) != Keyword or token.value != ")":
-                return "expected ), {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordreturnNode():
-            if type(token) != Keyword or token.value != "return":
-                return "expected return, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordLeftParenNode():
-            if type(token) != Keyword or token.value != "(":
-                return "expected (, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordRightBraceNode():
-            if type(token) != Keyword or token.value != "}":
-                return "expected }, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordGreaterThanNode():
-            if type(token) != Keyword or token.value != ">":
-                return "expected >, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordGreaterThanEqualsNode():
-            if type(token) != Keyword or token.value != ">=":
-                return "expected >=, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordLessThanEqualsNode():
-            if type(token) != Keyword or token.value != "<=":
-                return "expected <=, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordEqualsNode():
-            if type(token) != Keyword or token.value != "=":
-                return "expected =, {} found".format(token) 
-            current.value = token
-            current.pos = token.start
-            return None
-        case KeywordforNode():
-            if type(token) != Keyword or token.value != "for":
-                return "expected for, {} found".format(token) 
+        case KeywordBangEqualsNode():
+            if type(token) != Keyword or token.value != "!=":
+                return "expected !=, {} found".format(token) 
             current.value = token
             current.pos = token.start
             return None
@@ -1970,9 +1898,51 @@ def transitions(
             current.value = token
             current.pos = token.start
             return None
-        case KeywordLessThanNode():
-            if type(token) != Keyword or token.value != "<":
-                return "expected <, {} found".format(token) 
+        case KeywordreturnNode():
+            if type(token) != Keyword or token.value != "return":
+                return "expected return, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordforNode():
+            if type(token) != Keyword or token.value != "for":
+                return "expected for, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordRightBraceNode():
+            if type(token) != Keyword or token.value != "}":
+                return "expected }, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordfnNode():
+            if type(token) != Keyword or token.value != "fn":
+                return "expected fn, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordGreaterThanEqualsNode():
+            if type(token) != Keyword or token.value != ">=":
+                return "expected >=, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordEqualsNode():
+            if type(token) != Keyword or token.value != "=":
+                return "expected =, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordEqualsEqualsNode():
+            if type(token) != Keyword or token.value != "==":
+                return "expected ==, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordRightParenNode():
+            if type(token) != Keyword or token.value != ")":
+                return "expected ), {} found".format(token) 
             current.value = token
             current.pos = token.start
             return None
@@ -1982,15 +1952,27 @@ def transitions(
             current.value = token
             current.pos = token.start
             return None
-        case KeywordmainNode():
-            if type(token) != Keyword or token.value != "main":
-                return "expected main, {} found".format(token) 
+        case KeywordSemicolonNode():
+            if type(token) != Keyword or token.value != ";":
+                return "expected ;, {} found".format(token) 
             current.value = token
             current.pos = token.start
             return None
-        case KeywordLeftBraceNode():
-            if type(token) != Keyword or token.value != "{":
-                return "expected {, {} found".format(token) 
+        case KeywordLessThanEqualsNode():
+            if type(token) != Keyword or token.value != "<=":
+                return "expected <=, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordLessThanNode():
+            if type(token) != Keyword or token.value != "<":
+                return "expected <, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordelseNode():
+            if type(token) != Keyword or token.value != "else":
+                return "expected else, {} found".format(token) 
             current.value = token
             current.pos = token.start
             return None
@@ -2000,9 +1982,27 @@ def transitions(
             current.value = token
             current.pos = token.start
             return None
-        case KeywordBangEqualsNode():
-            if type(token) != Keyword or token.value != "!=":
-                return "expected !=, {} found".format(token) 
+        case KeywordmainNode():
+            if type(token) != Keyword or token.value != "main":
+                return "expected main, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordGreaterThanNode():
+            if type(token) != Keyword or token.value != ">":
+                return "expected >, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordLeftBraceNode():
+            if type(token) != Keyword or token.value != "{":
+                return "expected {, {} found".format(token) 
+            current.value = token
+            current.pos = token.start
+            return None
+        case KeywordLeftParenNode():
+            if type(token) != Keyword or token.value != "(":
+                return "expected (, {} found".format(token) 
             current.value = token
             current.pos = token.start
             return None

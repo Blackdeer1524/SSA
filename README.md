@@ -1,17 +1,96 @@
 # Построение SSA
 
-Реализовать простейший компилятор (на любом языке):
-
 - простой фронтенд
-- реализовать CFG
-- на базе CFG реализовать простейший IR
-- построить SSA форму над данным представлением
-
-Предусмотреть также вывод графа через GraphVis
+- CFG
+- на базе CFG реализован простейший IR
+- построен SSA форма над данным представлением
+- Есть отрисовка графа через GraphVis
 
 ## Control Flow Graph
-![alt text](./assets/image.png)
+![](./cfg.svg)
 
 * Черные ребра - ребра самого CFG
 * Синие ребра - ребра дерева доминаторов
 * Красные ребра - граф фронта доминаторов
+
+## IR
+
+```
+; predecesors: 
+; successors: BB1
+BB0:
+    a0 = 0
+    i0 = 0
+    jmp BB1
+
+; predecesors: BB0, BB6
+; successors: BB2, BB3
+BB1:
+    a1 = φ(a0, a2)
+    i1 = φ(i0, i2)
+    j0 = φ(j2)
+    k0 = φ(k1)
+    cmp i1 10
+    jlt BB2
+    jmp BB3
+
+; predecesors: BB1
+; successors: 
+BB3:
+    ret a1
+
+; predecesors: BB1
+; successors: BB4
+BB2:
+    j1 = i1
+    jmp BB4
+
+; predecesors: BB2, BB9
+; successors: BB5, BB6
+BB4:
+    a2 = φ(a3, a1)
+    j2 = φ(j1, j3)
+    k1 = φ(k0, k2)
+    cmp j2 10
+    jlt BB5
+    jmp BB6
+
+; predecesors: BB4
+; successors: BB1
+BB6:
+    %5 = i1 + 1
+    i2 = %5
+    jmp BB1
+
+; predecesors: BB4
+; successors: BB7, BB8
+BB5:
+    cmp i1 j2
+    je BB7
+    jmp BB8
+
+; predecesors: BB5
+; successors: BB9
+BB8:
+    %4 = j2 + 2
+    k4 = %4
+    jmp BB9
+
+; predecesors: BB7, BB8
+; successors: BB4
+BB9:
+    k2 = φ(k3, k4)
+    %0 = i1 + j2
+    %1 = a2 + %0
+    a3 = %1
+    %2 = j2 + 1
+    j3 = %2
+    jmp BB4
+
+; predecesors: BB5
+; successors: BB9
+BB7:
+    %3 = i1 + 1
+    k3 = %3
+    jmp BB9
+```
