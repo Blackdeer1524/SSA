@@ -1,0 +1,46 @@
+digraph {
+node [shape=box]
+	BB0 [label="BB0:\l    a0 = 0\l    i0 = 0\l    jmp BB1\l"]
+	BB0 -> BB1
+	BB1 [label="BB1:\l    a1 = φ(a2, a0)\l    i1 = φ(i2, i0)\l    j0 = φ(j2)\l    k0 = φ(k1)\l    cmp i1 10\l    jlt BB2\l    jmp BB3\l"]
+	BB1 -> BB2
+	BB1 -> BB3
+	BB2 [label="BB2:\l    j1 = i1\l    jmp BB4\l"]
+	BB2 -> BB4
+	BB4 [label="BB4:\l    a2 = φ(a3, a1)\l    j2 = φ(j1, j3)\l    k1 = φ(k0, k2)\l    cmp j2 10\l    jlt BB5\l    jmp BB6\l"]
+	BB4 -> BB5
+	BB4 -> BB6
+	BB5 [label="BB5:\l    cmp i1 j2\l    je BB7\l    jmp BB8\l"]
+	BB5 -> BB7
+	BB5 -> BB8
+	BB7 [label="BB7:\l    %4 = i1 + 1\l    k3 = %4\l    jmp BB9\l"]
+	BB7 -> BB9
+	BB9 [label="BB9:\l    k2 = φ(k3, k4)\l    %1 = i1 + j2\l    %2 = a2 + %1\l    a3 = %2\l    %3 = j2 + 1\l    j3 = %3\l    jmp BB4\l"]
+	BB9 -> BB4
+	BB8 [label="BB8:\l    %5 = j2 + 2\l    k4 = %5\l    jmp BB9\l"]
+	BB8 -> BB9
+	BB6 [label="BB6:\l    %0 = i1 + 1\l    i2 = %0\l    jmp BB1\l"]
+	BB6 -> BB1
+	BB3 [label="BB3:\l    ret a1\l"]
+
+	BB4 -> BB6 [color="blue"]
+	BB2 -> BB4 [color="blue"]
+	BB5 -> BB9 [color="blue"]
+	BB1 -> BB3 [color="blue"]
+	BB1 -> BB2 [color="blue"]
+	BB0 -> BB1 [color="blue"]
+	BB5 -> BB7 [color="blue"]
+	BB4 -> BB5 [color="blue"]
+	BB5 -> BB8 [color="blue"]
+
+	BB6 -> BB1 [color="red"]
+	BB4 -> BB4 [color="red"]
+	BB4 -> BB1 [color="red"]
+	BB2 -> BB1 [color="red"]
+	BB1 -> BB1 [color="red"]
+	BB9 -> BB4 [color="red"]
+	BB5 -> BB4 [color="red"]
+	BB7 -> BB9 [color="red"]
+	BB8 -> BB9 [color="red"]
+
+}

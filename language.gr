@@ -1,0 +1,82 @@
+`axiom Function    
+    `is "fn" "main" Block 
+    `end
+
+Block       
+    `is "{" Statements "}" 
+    `end
+
+Statements  
+    `is Declaration         ";" Statements
+    `or Reassignment        ";" Statements 
+    `or Return              ";" Statements
+    `or Condition               Statements
+    `or Loop                    Statements
+    `or `epsilon
+    `end
+
+Return
+    `is "return" Expression
+    `end
+
+Declaration 
+    `is "int" "#Ident" "=" Expression
+    `end
+
+Reassignment 
+    `is "#Ident" "=" Expression
+    `end
+
+Expression  
+    `is "#Number"           ExpressionTail 
+    `or "#Ident"            ExpressionTail 
+    `or "(" Expression ")" 
+    `end
+
+    ExpressionTail  
+        `is "+" Expression
+        `or `epsilon
+        `end
+
+Condition 
+    `is "if" "(" Logical ")" Block 
+    ElseBranch
+    `end
+    
+    ElseBranch
+        `is "else" Block
+        `or `epsilon
+        `end
+
+Logical
+    `is Expression CMP Expression 
+    `end
+
+    CMP 
+        `is "<"
+        `or "<=" 
+        `or ">" 
+        `or ">="
+        `or "=="
+        `or "!="
+        `end
+
+Loop 
+    `is "for" "(" Loop_1 ";" Loop_2 ";" Loop_3 ")" Block
+    `end
+    
+    Loop_1 
+        `is Declaration
+        `or Reassignment
+        `or `epsilon
+        `end
+    
+    Loop_2
+        `is Logical
+        `or `epsilon
+        `end
+    
+    Loop_3 
+        `is Reassignment
+        `or `epsilon
+        `end
